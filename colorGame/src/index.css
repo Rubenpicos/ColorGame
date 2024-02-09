@@ -26,6 +26,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #00111C
 }
 
 main {
@@ -40,8 +41,12 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
+  font-size: 6rem;
   font-weight: bold;
+}
+
+header{
+  background-color: #ccc;
 }
 
 header, footer {

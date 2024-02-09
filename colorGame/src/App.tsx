@@ -1,31 +1,37 @@
 import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { useMemo } from 'react';
 import './App.css'
 
 
-
+//the primary colors only. You can add more if you want.
 type Color = {
   name: string;
   color: string;
+  correct: boolean;
 }
 
 const colors = [
   {
     name: "red",
-    color: '#f00',
+    color: '#EF476F',
+    correct: false,
   },
   {
     name: "green",
-    color: '#0f0',
+    color: '#06D6A0',
+    correct: false,
   },
   {
     name: "blue",
-    color: '#00f',
+    color: '#118AB2',
+    correct: false,
   },
   {
     name: "yellow",
-    color: '#ff0',
+    color: '#FFD166',
+    correct: false,
   },
 ];
 
@@ -34,22 +40,55 @@ const colors = [
 
 function App() {
 
-  const [status, setStatus] = useState<"initial" | "playing" | "finish">('initial');
+  const [status, setStatus] = useState<"initial" | "playing" | "finished">('initial');
   const [time, setTime] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
-  const [color, setColor] = useState<null | Color>(null);
-  const [wrongCOlor, setWrongColor] = useState<null | Color>(null)
+  const [gameColors, setGameColors] = useState<Color[]>([]);
+  const correctColor = useMemo<Color> (() => gameColors.find((color) => color.correct)!,
+   [gameColors]);
 
   function handlePlay() {
     setStatus("playing");
     setTime(0);
     setScore(0);
 
-    const [color, wrongCOlor] = colors.slice().sort(() => Math.random() - 0.5)
-    setColor(color);
-    setWrongColor(wrongCOlor)
+    const [correctColor, wrongColor] = colors.slice().sort(() => Math.random() - 0.5)
 
+    setGameColors(
+      [
+        { ...correctColor, correct: true },
+        wrongColor,
+      ].sort(() => Math.random() - 0.5),
+
+    );
+
+
+      setCorrectColor(correctColor);
+    setWrongColor(wrongColor);
   }
+
+
+
+  function handleColorClick(clickedColor: Color) {
+    if (clickedColor.correct) {
+      setScore((score) => score + 1);
+
+
+      if(score === 9){
+        setStatus("finished")
+      }else{
+        const [correctColor, wrongColor] = colors.slice().sort(() => Math.random() - 0.5)
+      setGameColors([{ ...correctColor, correct: true }, wrongColor,].sort(() => Math.random() - 0.5),
+      
+
+      
+  
+      );
+      }
+    }
+  }
+
+
 
 
   useEffect(() => {
@@ -70,20 +109,20 @@ function App() {
   return (
     <main>
       <header>
-        <h1>{0} SCORE</h1>
+        <h1>{score} SCORE</h1>
         <h1>{time} SECONDS</h1>
       </header>
       {status === "playing" && (
         <section>
-          <span style={{ textTransform: "capitalize", color: wrongCOlor.color }}>{color?.name}</span>
+          <span style={{ textTransform: "capitalize", color: gameColors[0].color}}>{correctColor.name}</span>
         </section>
       )}
       <footer>
-        {status === "initial" && <button onClick={handlePlay}>Play</button>}
-        {status === "finished" && <button onClick={() => setStatus("initial")}>Restart</button>}
-        {status === "playing" && color && wrongCOlor && <>
-          <button onClick={() => handleColorClick(color)} style={{ width: 128, height: 128, backgroundColor: color.color }}></button>
-          <button onClick={() => handleColorClick(wrongColor)} style={{ width: 128, height: 128, backgroundColor: wrongCOlor.color }}></button>
+        {status === "initial" && <button style={{fontSize:32}} onClick={handlePlay}>Play</button>}
+        {status === "finished" && <button style={{fontSize:32}} onClick={() => setStatus("initial")}>Restart</button>}
+        {status === "playing" &&  <>
+          <button onClick={() => handleColorClick(gameColors[0])} style={{ width: 128, height: 128, backgroundColor: gameColors[0].color }}></button>
+          <button onClick={() => handleColorClick(gameColors[1])} style={{ width: 128, height: 128, backgroundColor: gameColors[1].color }}></button>
 
         </>}
 
