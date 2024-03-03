@@ -3,8 +3,8 @@ Welcome to the Visual Speed Game! In this game, your mission is to click on the 
 
 Try to get to ten correct answers as soon as possible!
 
-
 Features
+
 - Addictive game that challenges your visual speed and hand-eye coordination skills.
 - Simple and user-friendly interface.
 - Utilizes modern technologies like JavaScript, React, and TypeScript.

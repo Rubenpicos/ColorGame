@@ -1,128 +1,69 @@
-import { useEffect, useState } from 'react'
-import { useMemo } from 'react';
-import './App.css'
+import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import Title from "./components/Title";
+import { Button } from "./components/Button/Button";
+import "./App.css";
+import { Quiz } from "./components/Quiz/Quiz";
 
-
-//the primary colors only. You can add more if you want.
 type Color = {
   name: string;
   color: string;
-  correct: boolean;
-}
+  isCorrect: boolean;
+};
 
 const colors = [
   {
     name: "red",
-    color: '#EF476F',
-    correct: false,
+    color: "#EF476F",
+    isCorrect: false,
   },
   {
     name: "green",
-    color: '#06D6A0',
-    correct: false,
+    color: "#06D6A0",
+    isCorrect: false,
   },
   {
     name: "blue",
-    color: '#118AB2',
-    correct: false,
+    color: "#118AB2",
+    isCorrect: false,
   },
   {
     name: "yellow",
-    color: '#FFD166',
-    correct: false,
+    color: "#FFD166",
+    isCorrect: false,
   },
 ];
 
-
-
+const generateHexColor = () => {
+  // TODO
+  return { colorName: "purple", hex: "#c77fe0" };
+};
 
 function App() {
+  const [colorOption, setColorOption] = useState({
+    colorName: "red",
+    hex: "red",
+  });
 
-  const [status, setStatus] = useState<"initial" | "playing" | "finished">('initial');
-  const [time, setTime] = useState<number>(0);
-  const [score, setScore] = useState<number>(0);
-  const [gameColors, setGameColors] = useState<Color[]>([]);
-  const correctColor = useMemo<Color> (() => gameColors.find((color) => color.correct)!,
-   [gameColors]);
-
-  function handlePlay() {
-    setStatus("playing");
-    setTime(0);
-    setScore(0);
-
-    const [correctColor, wrongColor] = colors.slice().sort(() => Math.random() - 0.5)
-
-    setGameColors(
-      [
-        { ...correctColor, correct: true },
-        wrongColor,
-      ].sort(() => Math.random() - 0.5),
-
-    );
-
-
-     
-  }
-
-
-
-  function handleColorClick(clickedColor: Color) {
-    if (clickedColor.correct) {
-      setScore((score) => score + 1);
-
-
-      if(score === 9){
-        setStatus("finished")
-      }else{
-        const [correctColor, wrongColor] = colors.slice().sort(() => Math.random() - 0.5)
-      setGameColors([{ ...correctColor, correct: true }, wrongColor,].sort(() => Math.random() - 0.5),
-      
-
-      
-  
-      );
-      }
+  const handleColorClick = (currentColor: string) => {
+    // TODO
+    if (currentColor === colorOption.hex) {
+      const newColor = generateHexColor();
+      setColorOption(newColor);
     }
-  }
-
-
-
-
-  useEffect(() => {
-
-    let interval: number;
-    if (status === "playing") {
-
-      interval = setInterval(() => {
-        setTime((time) => time + 1)
-      }, 1000);
-    }
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [status]);
+  };
 
   return (
     <main>
-      <header>
-        <h1>{score} SCORE</h1>
-        <h1>{time} SECONDS</h1>
-      </header>
-      {status === "playing" && (
-        <section>
-          <span style={{ textTransform: "capitalize", color: gameColors[0].color}}>{correctColor.name}</span>
-        </section>
-      )}
+      <Title score={0} time={0} />
+      <Quiz
+        colorOptionHex={colorOption.hex}
+        colorOptionName={colorOption.colorName}
+      />
+
       <footer>
-        {status === "initial" && <button style={{fontSize:32}} onClick={handlePlay}>Play</button>}
-        {status === "finished" && <button style={{fontSize:32}} onClick={() => setStatus("initial")}>Restart</button>}
-        {status === "playing" &&  <>
-          <button onClick={() => handleColorClick(gameColors[0])} style={{ width: 128, height: 128, backgroundColor: gameColors[0].color }}></button>
-          <button onClick={() => handleColorClick(gameColors[1])} style={{ width: 128, height: 128, backgroundColor: gameColors[1].color }}></button>
-
-        </>}
-
+        <Button backgroundColor="red" onClick={handleColorClick} />
+        <Button backgroundColor="green" onClick={handleColorClick} />
       </footer>
     </main>
   );
